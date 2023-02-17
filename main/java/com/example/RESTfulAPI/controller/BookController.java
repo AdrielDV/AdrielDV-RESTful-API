@@ -2,6 +2,7 @@ package com.example.RESTfulAPI.controller;
 
 import com.example.RESTfulAPI.domain.Book;
 import com.example.RESTfulAPI.repository.BookRepository;
+import com.example.RESTfulAPI.services.BookServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,44 +11,40 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/Entity")
 public class BookController {
 
     @Autowired
-    private BookRepository repository;
+    private BookServices services;
 
     @GetMapping
-    public List<Book> getAllBooks() {
-        return repository.findAll();
+    public List<Book> getAll() {
+        return services.getAllBooks();
     }
 
     @PostMapping
-    public Book addNewBook(@RequestBody Book book) {
-        return repository.save(book);
+    public Book addNew(@RequestBody Book book) {
+        return services.addNewBook(book);
     }
 
-    @PutMapping("/updateBook/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id,
-                                              @RequestParam(required = false) String name,
-                                              @RequestParam(required = false) BigDecimal price,
-                                              @RequestParam(required = false) String date) {
-        Book bookUpdated = repository.findById(id).get();
-        bookUpdated.setName(name != null ? name : bookUpdated.getName());
-        bookUpdated.setDate(date != null ? date : bookUpdated.getDate());
-        bookUpdated.setPrice(price != null ? price : bookUpdated.getPrice());
-        repository.save(bookUpdated);
-        return ResponseEntity.ok(bookUpdated);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Book> updateEntity(@PathVariable Long id,
+                                             String name,
+                                             BigDecimal price,
+                                             String date) {
+
+        return ResponseEntity.ok(services.updateBook(id, name, price, date));
     }
 
 
-    @DeleteMapping("/deleteBooks")
-    public void deleteAllBooks(){
-        repository.deleteAll();
+    @DeleteMapping("/delete")
+    public void deleteAll() {
+        services.deleteAllBooks();
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteById(@PathVariable Long id){
-        repository.deleteById(id);
+    public void deleteById(@PathVariable Long id) {
+        services.deleteById(id);
     }
 
 
